@@ -18,7 +18,7 @@ def load_data(file):
     if file.name.endswith('.csv'):
         df = pd.read_csv(file)
         df.columns = ['Function', 'Metric', 'DE', 'ECOA', 'GA', 'GWO',
-                      'HDGCO', 'LCO', 'PSO', 'SKO', 'WOA']
+                      'HDGCO', 'GSO', 'PSO', 'SKO', 'WOA']
     elif file.name.endswith(('.xls', '.xlsx')):
         try:
             df = pd.read_excel(file)
@@ -32,7 +32,7 @@ def load_data(file):
 
     if 'Function' not in df.columns or 'Metric' not in df.columns:
         df.columns = ['Function', 'Metric', 'DE', 'ECOA', 'GA', 'GWO',
-                      'HDGCO', 'LCO', 'PSO', 'SKO', 'WOA']
+                      'HDGCO', 'GSO', 'PSO', 'SKO', 'WOA']
 
     return df
 
