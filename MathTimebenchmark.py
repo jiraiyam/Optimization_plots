@@ -17,8 +17,7 @@ def load_data(file):
 
     if file.name.endswith('.csv'):
         df = pd.read_csv(file)
-        df.columns = ['Function', 'Metric', 'DE', 'ECOA', 'GA', 'GWO',
-                      'HDGCO', 'GSO', 'PSO', 'SKO', 'WOA']
+        df.columns = ['Function', 'Metric']+list(df.columns[2:])
     elif file.name.endswith(('.xls', '.xlsx')):
         try:
             df = pd.read_excel(file)
@@ -31,8 +30,7 @@ def load_data(file):
         return None
 
     if 'Function' not in df.columns or 'Metric' not in df.columns:
-        df.columns = ['Function', 'Metric', 'DE', 'ECOA', 'GA', 'GWO',
-                      'HDGCO', 'GSO', 'PSO', 'SKO', 'WOA']
+        df.columns = ['Function', 'Metric'] + list(df.columns[2:])
 
     return df
 
@@ -149,7 +147,7 @@ def advanced_plots(df):
         st.pyplot(fig)
 
     elif plot_type == "Stacked Area Chart avg_time":
-        algorithms = ['DE', 'ECOA', 'GA', 'GWO', 'HDGCO', 'LCO', 'PSO', 'SKO', 'WOA']
+        algorithms = list(df.columns[2:])
 
         # Number of rows and columns for subplots (adjust as needed)
         n_cols = 3
@@ -166,15 +164,18 @@ def advanced_plots(df):
             # Create the stacked area plot for the current algorithm
             df_area.plot(kind='area', stacked=True, ax=axes[i])
 
+            # Set title and labels for each subplot
             axes[i].set_title(f'Stacked Area Chart of {algo} by Function and Metric', fontsize=12, weight='bold')
             axes[i].set_xlabel('Function', fontsize=10, weight='bold')
             axes[i].set_ylabel(algo, fontsize=10, weight='bold')
             axes[i].legend(title='Metric', fontsize=8)
             axes[i].tick_params(axis='x', labelrotation=45)
 
+        # Hide any unused subplots if algorithms don't perfectly fit the grid
         for j in range(i + 1, len(axes)):
             fig.delaxes(axes[j])
 
+        # Display the plot in Streamlit
         st.pyplot(fig)
 
 
@@ -198,6 +199,7 @@ def advanced_plots(df):
         st.pyplot(fig)
 
 
+# Interactive Plots
 def interactive_plots(df):
     st.header("Interactive Plots")
     plot_type = st.selectbox("Choose a plot type",
@@ -231,14 +233,17 @@ def interactive_plots(df):
         st.plotly_chart(fig)
 
 
+# Statistical Plots
 def statistical_plots(df):
     st.header("Statistical Plots")
 
+    # Add more plot types to the selection box
     plot_type = st.selectbox("Choose a plot type", [
          "Q-Q Plot", "KDE Plot", "Box Plot", "Violin Plot", "Swarm Plot"
     ])
 
     if plot_type == "Q-Q Plot":
+        # Q-Q plots for multiple metrics
         fig, axes = plt.subplots(1, 3, figsize=(16, 5))
         for i, metric in enumerate(['avg_time', 'std_time', 'Avg_FEs']):
             data = df[df['Metric'] == metric]['DE']
@@ -249,6 +254,7 @@ def statistical_plots(df):
         st.pyplot(fig)
 
     elif plot_type == "KDE Plot":
+        # KDE Plot for avg_time
         avg_time_df = df[df['Metric'] == 'avg_time'].drop(columns=['Metric']).set_index('Function').T
         fig, ax = plt.subplots(figsize=(10, 6))
         for col in avg_time_df.columns:
@@ -261,6 +267,7 @@ def statistical_plots(df):
         st.pyplot(fig)
 
     elif plot_type == "Box Plot":
+        # Box plot for avg_time across functions
         box_data = df[df['Metric'] == 'avg_time'].drop(columns=['Metric']).set_index('Function').T
         fig, ax = plt.subplots(figsize=(12, 6))
         sns.boxplot(data=box_data, ax=ax, palette='Set3', linewidth=2)
@@ -272,6 +279,7 @@ def statistical_plots(df):
         st.pyplot(fig)
 
     elif plot_type == "Violin Plot":
+        # Violin plot for avg_time across functions
         violin_data = df[df['Metric'] == 'avg_time'].drop(columns=['Metric']).set_index('Function').T
         fig, ax = plt.subplots(figsize=(12, 6))
         sns.violinplot(data=violin_data, ax=ax, palette='muted')
@@ -283,6 +291,7 @@ def statistical_plots(df):
         st.pyplot(fig)
 
     elif plot_type == "Swarm Plot":
+        # Swarm plot for avg_time across functions
         swarm_data = df[df['Metric'] == 'avg_time'].drop(columns=['Metric']).set_index('Function').T.melt(var_name='Function', value_name='Average Time')
         fig, ax = plt.subplots(figsize=(12, 6))
         sns.swarmplot(x='Function', y='Average Time', data=swarm_data, ax=ax, palette='husl', size=6)
@@ -297,16 +306,20 @@ def statistical_plots(df):
 def time_series_plots(df):
     st.header("Time Series Plots")
 
+    # Adding more plot types for comparison and trend analysis
     plot_type = st.selectbox("Choose a plot type", ["Line Plot", "Area Plot", "Stacked Area Plot"])
 
     if plot_type == "Line Plot":
         avg_time_df = df[df['Metric'] == 'avg_time']
 
+        # Enhanced line plot with marker styles and legends
         fig, ax = plt.subplots(figsize=(14, 8))
 
+        # Iterate through each optimizer column and plot a line for each
         for optimizer in avg_time_df.columns[2:]:
             sns.lineplot(data=avg_time_df, x='Function', y=optimizer, label=optimizer, marker='o', ax=ax, linewidth=2.5)
 
+        # Customizing the plot with bold text and improved gridlines
         plt.title('Average Time Across Functions for Each Optimizer', fontsize=18, weight='bold')
         plt.xlabel('Function', fontsize=14, weight='bold')
         plt.ylabel('Average Time', fontsize=14, weight='bold')
@@ -315,44 +328,60 @@ def time_series_plots(df):
         plt.grid(True, linestyle='--', alpha=0.6)
         plt.legend(title='Optimizer', bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=12, title_fontsize=14)
 
+        # Display plot
         st.pyplot(fig)
 
     elif plot_type == "Area Plot":
+        # Filter DataFrame for 'std_time' metric
         std_time_df = df[df['Metric'] == 'std_time']
 
+        # Create function labels 'F1' to 'F23'
         function_labels = [f'F{i}' for i in range(1, 24)]
         std_time_df['Function'] = function_labels[:len(std_time_df)]
 
+        # Pivot table to structure for area plot
         pivot_std_time = std_time_df.set_index('Function').drop(columns='Metric').T
 
+        # Creating the figure with a larger size
         fig, ax = plt.subplots(figsize=(16, 9))
 
+        # Plot the area chart with transparency and smooth colormap
         pivot_std_time.plot(kind='area', stacked=False, ax=ax, cmap='coolwarm', alpha=0.85)
 
+        # Enhanced plot styling with larger text and bold labels
         plt.title('Area Plot of Standard Time Across Functions and Optimizers', fontsize=18, weight='bold', pad=20)
         plt.xlabel('Function', fontsize=14, weight='bold')
         plt.ylabel('Standard Time', fontsize=14, weight='bold')
         plt.xticks(rotation=45, fontsize=12, weight='bold')
         plt.yticks(fontsize=12, weight='bold')
 
+        # Adding gridlines for better visualization
         ax.grid(True, linestyle='--', alpha=0.5)
 
+        # Adjusting legend for better positioning
         plt.legend(title='Functions', fontsize=12, title_fontsize=14, loc='upper left', bbox_to_anchor=(1, 1))
 
+        # Display plot
         st.pyplot(fig)
 
     elif plot_type == "Stacked Area Plot":
+        # Filter DataFrame for 'avg_time' metric
         avg_time_df = df[df['Metric'] == 'avg_time']
 
+        # Create the function labels 'F1' to 'F23'
         function_labels = [f'F{i}' for i in range(1, 24)]
         avg_time_df['Function'] = function_labels[:len(avg_time_df)]
 
+        # Pivot the table for stacked area plot
         pivot_avg_time = avg_time_df.set_index('Function').drop(columns='Metric').T
 
+        # Create the figure for the stacked area plot
         fig, ax = plt.subplots(figsize=(16, 9))
 
+        # Plot the stacked area chart with coolwarm colormap and transparency
         pivot_avg_time.plot(kind='area', stacked=True, ax=ax, cmap='coolwarm', alpha=0.85)
 
+        # Set titles and labels with enhanced font sizes and boldness
         plt.title('Stacked Area Plot of Average Time Across Functions and Optimizers', fontsize=18, weight='bold',
                   pad=20)
         plt.xlabel('Function', fontsize=14, weight='bold')
@@ -360,10 +389,13 @@ def time_series_plots(df):
         plt.xticks(rotation=45, fontsize=12, weight='bold')
         plt.yticks(fontsize=12, weight='bold')
 
+        # Add gridlines for better readability of values
         ax.grid(True, linestyle='--', alpha=0.5)
 
+        # Legend adjustment for better positioning and readability
         plt.legend(title='Optimizers', fontsize=12, title_fontsize=14, loc='upper left', bbox_to_anchor=(1, 1))
 
+        # Display plot
         st.pyplot(fig)
 
 
