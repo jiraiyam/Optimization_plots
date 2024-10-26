@@ -6,4 +6,4 @@ plotly
 numpy
 scipy
 openpyxl
-scikit-learn=
+scikit-learn
