@@ -338,7 +338,7 @@ class GSDTODashboard:
 
     def __init__(self):
         st.set_page_config(layout="wide")
-        st.title("GSDTO Analysis Dashboard")
+        st.title("Sensitivity Analysis")
         self.config = self._setup_sidebar()
         self.plotter = Plotter(self.config)
 
