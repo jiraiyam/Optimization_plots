@@ -215,7 +215,7 @@ def main():
 
             tabs = st.tabs(["Time Series Analysis",
 
-                            "Complexity Measures", "Wavelet Analysis",
+                             "Wavelet Analysis",
 
                             "Network Analysis"])
 
@@ -372,52 +372,7 @@ def main():
 
                 st.pyplot(fig)
 
-            with tabs[4]:
-
-                st.subheader("Network Analysis")
-
-                # Visibility Graph
-
-                st.subheader("Horizontal Visibility Graph Analysis")
-
-                n = len(data)
-
-                adj_matrix = np.zeros((n, n))
-
-                # Create horizontal visibility graph
-
-                for i in range(n):
-
-                    for j in range(i + 1, n):
-
-                        visible = True
-
-                        for k in range(i + 1, j):
-
-                            if data[k] >= min(data[i], data[j]):
-                                visible = False
-
-                                break
-
-                        if visible:
-                            adj_matrix[i, j] = adj_matrix[j, i] = 1
-
-                # Calculate degree distribution
-
-                degrees = np.sum(adj_matrix, axis=0)
-
-                fig = plt.figure(figsize=(12, 6))
-
-                plt.hist(degrees, bins=30, density=True, alpha=0.7)
-
-                plt.xlabel('Degree')
-
-                plt.ylabel('Probability')
-
-                plt.title('Degree Distribution of Visibility Graph')
-
-                st.pyplot(fig)
-
+          
 
 if __name__ == "__main__":
     main()
