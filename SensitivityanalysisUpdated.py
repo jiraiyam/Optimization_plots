@@ -215,7 +215,7 @@ def main():
 
             tabs = st.tabs(["Time Series Analysis",
 
-                             "Wavelet Analysis",
+                            "Complexity Measures", "Wavelet Analysis",
 
                             "Network Analysis"])
 
@@ -372,7 +372,7 @@ def main():
 
                 st.pyplot(fig)
 
-
+            
 
 if __name__ == "__main__":
     main()
