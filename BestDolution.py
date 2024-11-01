@@ -149,7 +149,7 @@ def basic_plots(df, file_name):
     plt.figure(figsize=(12, 6))
     sns.boxplot(data=df_melted, x='Algorithm', y='Value', palette='pastel')
     sns.swarmplot(data=df_melted, x='Algorithm', y='Value', color='black', alpha=0.6)
-    plt.title(f'Boxplot with Swarm for {file_name}')
+    plt.title(f'Boxplot with Swarm for {file_name}' , fontsize=16, fontweight='bold')
     plt.xticks(rotation=90)
     plt.show()
     st.pyplot(plt)
