@@ -142,6 +142,8 @@ def basic_plots(df, file_name):
     sns.boxplot(data=df_melted, x='Algorithm', y='Value', color='lightgray')
     sns.stripplot(data=df_melted, x='Algorithm', y='Value', color='black', jitter=True, alpha=0.6)
     plt.title(f'Boxplot with Jittered Points for {file_name}')
+    plt.xlabel('Algorithm', fontsize=14)
+    plt.ylabel('Value', fontsize=14)
     plt.xticks(rotation=90)
     plt.show()
 
