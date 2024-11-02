@@ -273,7 +273,7 @@ class Plotter:
         axes[0, 1].set_ylabel('PC2', fontsize=12, fontweight='bold')
         axes[0, 1].set_title('First Two Principal Components', fontsize=14, fontweight='bold')
         cbar = plt.colorbar(scatter, ax=axes[0, 1], label='Average Feature Value' , fontweight='bold')
-        cbar.ax.tick_params(labelsize=10 , fontweight='bold')
+        cbar.ax.tick_params(labelsize=10 )
         axes[0, 1].grid(True, linestyle='--', alpha=0.6)
 
         # Loadings heatmap
