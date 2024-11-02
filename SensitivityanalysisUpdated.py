@@ -149,7 +149,7 @@ def main():
             plt.title("Radar Plot of Cluster Means")
             
             # Add the legend outside the main plot area
-            fig.legend(loc="center right", bbox_to_anchor=(1.1, 0.5))  # Adjust bbox_to_anchor as needed
+            #fig.legend(loc="center right", bbox_to_anchor=(1.1, 0.5))  # Adjust bbox_to_anchor as needed
             st.pyplot(fig)
 
 
