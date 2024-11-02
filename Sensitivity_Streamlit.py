@@ -79,11 +79,12 @@ class Plotter:
         for col in time_columns:
             sns.lineplot(data=df, x=df.index, y=col, label=col, marker='o', ci=95)
 
-        plt.title("Convergence Times for GSDTO Parameters")
-        plt.xlabel("Index")
-        plt.ylabel("Time")
+        plt.title("Convergence Times for GSDTO Parameters", fontweight='bold')
+        plt.xlabel("Index", fontweight='bold')
+        plt.ylabel("Time", fontweight='bold')
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.tight_layout()
+
         return fig
 
     def create_distribution_grid(self, df: pd.DataFrame, columns: List[str]) -> plt.Figure:
