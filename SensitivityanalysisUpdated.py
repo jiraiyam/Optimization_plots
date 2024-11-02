@@ -143,7 +143,7 @@ def main():
                 ax.fill(angles_plot, values, alpha=0.25)
             
             ax.set_xticks(angles)
-            ax.set_xticklabels(labels, rotation=45, ha='upper right')
+            ax.set_xticklabels(labels, rotation=45, ha='right')
             plt.title("Radar Plot of Cluster Means")
             
             # Modified legend position to be outside on the right
