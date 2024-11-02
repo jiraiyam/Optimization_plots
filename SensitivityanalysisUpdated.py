@@ -134,7 +134,7 @@ def main():
             labels = cluster_means.columns
             num_vars = len(labels)
             angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-            fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+            fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(polar=True))
             for i, row in cluster_means.iterrows():
                 values = row.values.tolist()
                 values += [values[0]]  # Repeat first value to close the polygon
@@ -146,8 +146,9 @@ def main():
             ax.set_xticklabels(labels, rotation=45, ha='right')
             plt.title("Radar Plot of Cluster Means")
             
-            # Modified legend position - moved to top right corner
-            plt.legend(bbox_to_anchor=(1.3, 1.1))
+            # Modified legend position to be outside on the right
+            ax.legend(loc='center left', bbox_to_anchor=(1.15, 0.5))
+            plt.tight_layout()
             st.pyplot(fig)
             
 
