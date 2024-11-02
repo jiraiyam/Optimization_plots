@@ -229,10 +229,10 @@ class Plotter:
 
         for ax in [ax1, ax2]:
             ax.set_xticks(angles[:-1])
-            ax.set_xticklabels(value_columns)
+            ax.set_xticklabels(value_columns, fontweight='bold')  
 
-        ax1.set_title("Individual Samples")
-        ax2.set_title("Mean ± Std Dev")
+        ax1.set_title("Individual Samples", fontweight='bold')  
+        ax2.set_title("Mean ± Std Dev", fontweight='bold')  
         plt.tight_layout()
         return fig
 
