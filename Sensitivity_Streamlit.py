@@ -239,23 +239,23 @@ class Plotter:
     def create_pca_visualization(self, df: pd.DataFrame, value_columns: List[str]) -> Tuple[plt.Figure, PCA]:
         """Generate a comprehensive PCA visualization with enhanced visuals for scree plot,
         scatter plot of first two components, loading heatmap, and biplot for detailed analysis."""
-
+    
         # Standardize the data
         scaler = StandardScaler()
         scaled_data = scaler.fit_transform(df[value_columns])
-
+    
         # Initialize PCA
         pca = PCA()
         pca_result = pca.fit_transform(scaled_data)
-
+    
         # Set up subplots
         fig, axes = plt.subplots(2, 2, figsize=(self.config.fig_width * 2, self.config.fig_height * 2))
         fig.suptitle('PCA Analysis', fontsize=16, fontweight='bold')
-
+    
         # Scree plot with explained and cumulative variance
         explained_variance = pca.explained_variance_ratio_
         cumulative_variance = np.cumsum(explained_variance)
-
+    
         axes[0, 0].bar(range(1, len(explained_variance) + 1), explained_variance, color='skyblue',
                        label='Explained Variance')
         axes[0, 0].plot(range(1, len(explained_variance) + 1), cumulative_variance, 'r-', marker='o',
@@ -265,41 +265,42 @@ class Plotter:
         axes[0, 0].set_title('Scree Plot', fontsize=14, fontweight='bold')
         axes[0, 0].legend()
         axes[0, 0].grid(True, linestyle='--', alpha=0.6)
-
+    
         # Scatter plot of the first two principal components
         scatter = axes[0, 1].scatter(pca_result[:, 0], pca_result[:, 1],
                                      c=df[value_columns].mean(axis=1), cmap='viridis', edgecolor='k', alpha=0.7)
         axes[0, 1].set_xlabel('PC1', fontsize=12, fontweight='bold')
         axes[0, 1].set_ylabel('PC2', fontsize=12, fontweight='bold')
         axes[0, 1].set_title('First Two Principal Components', fontsize=14, fontweight='bold')
-        cbar = plt.colorbar(scatter, ax=axes[0, 1], label='Average Feature Value' , fontweight='bold')
-        cbar.ax.tick_params(labelsize=10 )
+        cbar = plt.colorbar(scatter, ax=axes[0, 1], label='Average Feature Value')
+        cbar.ax.tick_params(labelsize=10)
         axes[0, 1].grid(True, linestyle='--', alpha=0.6)
-
+    
         # Loadings heatmap
         loadings = pca.components_.T
         loading_matrix = pd.DataFrame(loadings, columns=[f'PC{i + 1}' for i in range(loadings.shape[1])],
-                                      index=value_columns)
+                                                    index=value_columns)
         sns.heatmap(loading_matrix, cmap='coolwarm', center=0, annot=True, fmt='.2f', ax=axes[1, 0],
                     cbar_kws={'shrink': 0.7})
         axes[1, 0].set_title('PCA Loadings Heatmap', fontsize=14, fontweight='bold')
-
+    
         # Biplot for the first two principal components
         coeff = np.transpose(pca.components_[:2, :])
         xs, ys = pca_result[:, 0], pca_result[:, 1]
-
+    
         for i, (x, y) in enumerate(zip(coeff[:, 0], coeff[:, 1])):
             axes[1, 1].arrow(0, 0, x, y, color='red', alpha=0.7, linewidth=1.5, head_width=0.05)
             axes[1, 1].text(x * 1.15, y * 1.15, value_columns[i], color='darkred', ha='center', fontsize=10)
-
+    
         axes[1, 1].scatter(xs, ys, alpha=0.5, color='blue', edgecolor='k')
         axes[1, 1].set_xlabel('PC1', fontsize=12, fontweight='bold')
         axes[1, 1].set_ylabel('PC2', fontsize=12, fontweight='bold')
         axes[1, 1].set_title('Biplot of Principal Components', fontsize=14, fontweight='bold')
         axes[1, 1].grid(True, linestyle='--', alpha=0.6)
-
+    
         plt.tight_layout(rect=[0, 0, 1, 0.96])
         return fig, pca
+
 
     def create_cluster_plot(self, df: pd.DataFrame, value_columns: List[str]) -> plt.Figure:
         """Generate cluster analysis visualization."""
