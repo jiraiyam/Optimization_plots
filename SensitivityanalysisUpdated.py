@@ -150,6 +150,8 @@ def main():
             
             # Add the legend outside the main plot area
             #fig.legend(loc="center right", bbox_to_anchor=(1.1, 0.5))  # Adjust bbox_to_anchor as needed
+            plt.legend(bbox_to_anchor=(1.3, 1.1))
+
             st.pyplot(fig)
 
 
