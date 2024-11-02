@@ -147,7 +147,7 @@ def main():
             plt.title("Radar Plot of Cluster Means")
             
             # Modified legend position to be outside on the right
-            ax.legend(loc='center left', bbox_to_anchor=(1.15, 0.5))
+            ax.legend(loc='Best')
             plt.tight_layout()
             st.pyplot(fig)
             
