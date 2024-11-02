@@ -127,7 +127,6 @@ def main():
 
         elif sections == "Clustering Analysis":
             st.header("Clustering Analysis")
-
             # Cluster radar plot
             st.subheader("Cluster Radar Plot")
             cluster_means = df.groupby('Cluster').mean()
@@ -135,7 +134,6 @@ def main():
             labels = cluster_means.columns
             num_vars = len(labels)
             angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-
             fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
             for i, row in cluster_means.iterrows():
                 values = row.values.tolist()
@@ -148,8 +146,8 @@ def main():
             ax.set_xticklabels(labels, rotation=45, ha='right')
             plt.title("Radar Plot of Cluster Means")
             
-            # Place legend using ax.legend with a specific bbox_to_anchor position
-            ax.legend(loc="upper right", bbox_to_anchor=(1.1, 1.1))  # Try different values here if needed
+            # Modified legend position - moved to top right corner
+            plt.legend(bbox_to_anchor=(1.3, 1.1))
             st.pyplot(fig)
             
 
