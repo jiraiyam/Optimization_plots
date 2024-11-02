@@ -146,7 +146,8 @@ def main():
             ax.set_xticks(angles)
             ax.set_xticklabels(labels, rotation=45, ha='right')
             plt.title("Radar Plot of Cluster Means")
-            plt.legend(loc="upper right", bbox_to_anchor=(1, 1))
+            plt.legend(loc="upper right", bbox_to_anchor=(1.1, 1.1))
+
             st.pyplot(fig)
 
             # 3D scatter plot
