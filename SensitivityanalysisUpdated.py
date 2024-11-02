@@ -148,11 +148,10 @@ def main():
             ax.set_xticklabels(labels, rotation=45, ha='right')
             plt.title("Radar Plot of Cluster Means")
             
-            # Add the legend outside the main plot area
-            #fig.legend(loc="center right", bbox_to_anchor=(1.1, 0.5))  # Adjust bbox_to_anchor as needed
-            plt.legend(bbox_to_anchor=(1.3, 1.1))
-
+            # Place legend using ax.legend with a specific bbox_to_anchor position
+            ax.legend(loc="upper right", bbox_to_anchor=(1.1, 1.1))  # Try different values here if needed
             st.pyplot(fig)
+            
 
 
             # 3D scatter plot
