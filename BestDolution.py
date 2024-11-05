@@ -46,7 +46,7 @@ def basic_plots(df, file_name):
     plt.title(f'Boxplot of Algorithm Performance for  {file_name}', fontsize=16, fontweight='bold')
     plt.xlabel('Algorithm', fontsize=14, fontweight='bold')
     plt.ylabel('Performance Metrics', fontsize=14, fontweight='bold')
-    plt.xticks(rotation=90 , fontweight='bold')
+    plt.xticks(rotation=90 )
     plt.tight_layout()
     st.pyplot(plt)
 
