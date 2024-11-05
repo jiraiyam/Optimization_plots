@@ -13,7 +13,8 @@ def load_data(uploaded_file):
         if uploaded_file.name.endswith('.csv'):
             data = pd.read_csv(uploaded_file)
         elif uploaded_file.name.endswith(('.xls', '.xlsx')):
-            data = pd.read_excel(uploaded_file)
+            # Use uploaded_file as a binary buffer for read_excel
+            data = pd.read_excel(uploaded_file, engine='openpyxl')  # Specify engine for .xlsx support
         else:
             st.error("Unsupported file type. Please upload a CSV or Excel file.")
             return None
@@ -28,6 +29,8 @@ def main():
     if uploaded_file is not None:
         df = load_data(uploaded_file)
         file_name_without_extension = os.path.splitext(uploaded_file.name)[0]
+        data = load_data(uploaded_file)
+
 
         st.write(f"Uploaded file name: {file_name_without_extension}")
 
