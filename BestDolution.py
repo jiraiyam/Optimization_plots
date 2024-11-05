@@ -16,7 +16,7 @@ def load_data(uploaded_file):
 def main():
     st.title("Statistical Plots BestSolution Visualization App")
 
-    uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
+    uploaded_file = st.file_uploader("Choose a file", type=['csv', 'xls', 'xlsx'])
 
     if uploaded_file is not None:
         df = load_data(uploaded_file)
