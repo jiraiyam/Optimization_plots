@@ -9,7 +9,14 @@ st.set_page_config(page_title="Statistical Plots BestSolution", layout="wide")
 @st.cache_data
 def load_data(uploaded_file):
     if uploaded_file is not None:
-        data = pd.read_csv(uploaded_file)
+        # Check file type based on file extension
+        if uploaded_file.name.endswith('.csv'):
+            data = pd.read_csv(uploaded_file)
+        elif uploaded_file.name.endswith(('.xls', '.xlsx')):
+            data = pd.read_excel(uploaded_file)
+        else:
+            st.error("Unsupported file type. Please upload a CSV or Excel file.")
+            return None
         return data
     return None
 
