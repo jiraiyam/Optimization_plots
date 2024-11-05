@@ -9,28 +9,18 @@ st.set_page_config(page_title="Statistical Plots BestSolution", layout="wide")
 @st.cache_data
 def load_data(uploaded_file):
     if uploaded_file is not None:
-        # Check file type based on file extension
-        if uploaded_file.name.endswith('.csv'):
-            data = pd.read_csv(uploaded_file)
-        elif uploaded_file.name.endswith(('.xls', '.xlsx')):
-            # Use uploaded_file as a binary buffer for read_excel
-            data = pd.read_excel(uploaded_file, engine='openpyxl')  # Specify engine for .xlsx support
-        else:
-            st.error("Unsupported file type. Please upload a CSV or Excel file.")
-            return None
+        data = pd.read_csv(uploaded_file)
         return data
     return None
 
 def main():
     st.title("Statistical Plots BestSolution Visualization App")
 
-    uploaded_file = st.file_uploader("Choose a file", type=['csv', 'xls', 'xlsx'])
+    uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
 
     if uploaded_file is not None:
         df = load_data(uploaded_file)
         file_name_without_extension = os.path.splitext(uploaded_file.name)[0]
-        data = load_data(uploaded_file)
-
 
         st.write(f"Uploaded file name: {file_name_without_extension}")
 
@@ -53,11 +43,10 @@ def basic_plots(df, file_name):
     # Box Plot
     plt.figure(figsize=(12, 8))
     sns.boxplot(data=df)
-    plt.title(f'Boxplot of Algorithm Performance for {file_name}', fontsize=16, fontweight='bold')
-    plt.xlabel('Algorithm', fontsize=14, fontweight='bold')
-    plt.ylabel('Performance Metrics', fontsize=14, fontweight='bold')
-    plt.xticks(rotation=90, fontweight='bold')
-    plt.yticks(fontweight='bold')
+    plt.title(f'Boxplot of Algorithm Performance for  {file_name}', fontsize=16, fontweight='bold')
+    plt.xlabel('Algorithm', fontsize=14)
+    plt.ylabel('Performance Metrics', fontsize=14)
+    plt.xticks(rotation=90)
     plt.tight_layout()
     st.pyplot(plt)
 
@@ -153,8 +142,6 @@ def basic_plots(df, file_name):
     sns.boxplot(data=df_melted, x='Algorithm', y='Value', color='lightgray')
     sns.stripplot(data=df_melted, x='Algorithm', y='Value', color='black', jitter=True, alpha=0.6)
     plt.title(f'Boxplot with Jittered Points for {file_name}')
-    plt.xlabel('Algorithm', fontsize=14 ,fontweight='bold')
-    plt.ylabel('Value', fontsize=14 , fontweight='bold')
     plt.xticks(rotation=90)
     plt.show()
 
@@ -162,9 +149,7 @@ def basic_plots(df, file_name):
     plt.figure(figsize=(12, 6))
     sns.boxplot(data=df_melted, x='Algorithm', y='Value', palette='pastel')
     sns.swarmplot(data=df_melted, x='Algorithm', y='Value', color='black', alpha=0.6)
-    plt.title(f'Boxplot with Swarm for {file_name}' , fontsize=16, fontweight='bold')
-    plt.xlabel('Algorithm', fontsize=14 ,fontweight='bold')
-    plt.ylabel('Value', fontsize=14 , fontweight='bold')
+    plt.title(f'Boxplot with Swarm for {file_name}')
     plt.xticks(rotation=90)
     plt.show()
     st.pyplot(plt)
