@@ -43,13 +43,13 @@ def basic_plots(df, file_name):
     # Box Plot
     plt.figure(figsize=(12, 8))
     sns.boxplot(data=df)
-    plt.title(f'Boxplot of Algorithm Performance for  {file_name}', fontsize=16, fontweight='bold')
-    plt.xlabel('Algorithm', fontsize=14)
-    plt.ylabel('Performance Metrics', fontsize=14)
-    plt.xticks(rotation=90)
+    plt.title(f'Boxplot of Algorithm Performance for {file_name}', fontsize=16, fontweight='bold')
+    plt.xlabel('Algorithm', fontsize=14, fontweight='bold')
+    plt.ylabel('Performance Metrics', fontsize=14, fontweight='bold')
+    plt.xticks(rotation=90, fontweight='bold')
+    plt.yticks(fontweight='bold')
     plt.tight_layout()
     st.pyplot(plt)
-
 
     # Custom Box Plot with Color Palette
     plt.figure(figsize=(12, 8))
