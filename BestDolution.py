@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 import os
-st.set_page_config(page_title="Statistical Plots BestSolution", layout="wide")
+st.set_page_config(page_title=" BestSolution", layout="wide")
 
 @st.cache_data
 def load_data(uploaded_file):
@@ -14,7 +14,7 @@ def load_data(uploaded_file):
     return None
 
 def main():
-    st.title("Statistical Plots BestSolution Visualization App")
+    st.title(" BestSolution Visualization ")
 
     uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
 
