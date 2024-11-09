@@ -1192,7 +1192,7 @@ def plot_feature_selection(df):
 
 # Main app
 def main():
-    st.title('Algorithm Performance Analysis')
+    st.title('Feature Selection  Analysis')
 
     uploaded_file = st.file_uploader("Choose an Excel file", type=["xlsx"])
 
