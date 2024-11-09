@@ -60,7 +60,7 @@ def plot_average_metrics(averages_df):
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
     st.pyplot(fig)
-    metrics = ['Average Error', 'Average Select Size', 'Average Fitness', 'Time(S)']
+    metrics = averages_df.index
     colors = ['skyblue', 'lightgreen', 'orange', 'purple']
     for metric, color in zip(metrics, colors):
         st.subheader(f'{metric} Comparison across Algorithms')
@@ -73,6 +73,8 @@ def plot_average_metrics(averages_df):
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.violinplot(data=averages_df.transpose(), inner="quart", palette="muted", ax=ax)
     ax.set_title('Distribution of Metrics Across Algorithms')
+    plt.xticks(rotation=90)
+
     st.pyplot(fig)
     st.subheader('Stacked Metrics Comparison')
     fig, ax = plt.subplots(figsize=(14, 8))
@@ -177,7 +179,7 @@ def plot_average_metrics(averages_df):
         values += values[:1]
         plt.polar(angles, values, label=algo, linewidth=2)
     plt.title('Radar Plot of Algorithm Performance', fontsize=16, fontweight='bold')
-    plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
+    plt.legend(loc='upper right', bbox_to_anchor=(1.4, 1.1))
     st.pyplot(plt)
     plt.figure(figsize=(14, 8))
     sns.boxplot(data=averages_df.T, palette="Set2")
@@ -210,7 +212,7 @@ def plot_average_metrics(averages_df):
         values += values[:1]  # To close the loop
         ax.bar(angles, values, width=0.3, alpha=0.6, label=algo)
     plt.title('Radial Bar Chart of Algorithm Performance Metrics', fontsize=16, fontweight='bold')
-    plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
+    plt.legend(loc='upper right', bbox_to_anchor=(1.4, 1.1))
     st.pyplot(fig)
 def plot_feature_selection(df):
     """Generate plots for feature selection analysis"""
@@ -607,10 +609,10 @@ def plot_feature_selection(df):
     # KDE Plot for Specific Algorithms
     def kde_plot_specific(df):
         plt.figure(figsize=(12, 6))
-        sns.kdeplot(df['bSCWDTO'], shade=True, color="skyblue", label="bSCWDTO", alpha=0.7)
-        sns.kdeplot(df['bDTO'], shade=True, color="orange", label="bDTO", alpha=0.7)
-        sns.kdeplot(df['bSC'], shade=True, color="green", label="bSC", alpha=0.7)
-        sns.kdeplot(df['bPSO'], shade=True, color="red", label="bPSO", alpha=0.7)
+        sns.kdeplot(df[df.columns[0]], shade=True, color="skyblue", label="bSCWDTO", alpha=0.7)
+        sns.kdeplot(df[df.columns[1]], shade=True, color="orange", label="bDTO", alpha=0.7)
+        sns.kdeplot(df[df.columns[2]], shade=True, color="green", label="bSC", alpha=0.7)
+        sns.kdeplot(df[df.columns[3]], shade=True, color="red", label="bPSO", alpha=0.7)
         plt.title("KDE Plot for Algorithm Performance", fontsize=16)
         plt.xlabel("Performance", fontsize=14)
         plt.ylabel("Density", fontsize=14)
@@ -639,7 +641,7 @@ def plot_feature_selection(df):
 
     def hexbin_plot(df):
         plt.figure(figsize=(10, 6))
-        plt.hexbin(df['bSCWDTO'], df['bDTO'], gridsize=10, cmap='Blues')
+        plt.hexbin(df[df.columns[0]], df[df.columns[1]], gridsize=10, cmap='Blues')
         plt.colorbar(label='Density')
         plt.xlabel('bSCWDTO')
         plt.ylabel('bDTO')
@@ -658,7 +660,7 @@ def plot_feature_selection(df):
     def box_kde_plot(df):
         plt.figure(figsize=(10, 6))
         sns.boxplot(data=df, width=0.5, color="lightblue", showfliers=False)
-        sns.kdeplot(df['bSCWDTO'], color='black', fill=True, alpha=0.3)
+        sns.kdeplot(df[df.columns[0]], color='black', fill=True, alpha=0.3)
         plt.title('Box Plot with KDE Overlay', fontweight='bold')
         st.pyplot(plt)
 
@@ -671,8 +673,8 @@ def plot_feature_selection(df):
 
     # Bar Plot with Error Bars and Annotations
     def bar_plot_with_error(df):
-        means = df[['bSCWDTO', 'bPSO', 'bGWO']].mean()
-        stds = df[['bSCWDTO', 'bPSO', 'bGWO']].std()
+        means = df[df.columns[:3]].mean()  # Assuming you want the first three columns
+        stds = df[df.columns[:3]].std()
 
         plt.figure(figsize=(10, 6))
         sns.barplot(x=means.index, y=means.values, yerr=stds.values, capsize=5, color='lightblue')
