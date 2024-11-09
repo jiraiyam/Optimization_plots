@@ -8,7 +8,7 @@ import numpy as np
 from scipy import stats
 
 # Set page config
-st.set_page_config(page_title="Math Time Benchmark Visualization", layout="wide")
+st.set_page_config(page_title=" Time Benchmark Visualization", layout="wide")
 
 
 # Load data
@@ -37,7 +37,7 @@ def load_data(file):
 
 # Main app
 def main():
-    st.title("Math Benchmark Visualization App")
+    st.title("Time  Benchmark Visualization App")
 
     # File uploader
     uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=['csv', 'xlsx', 'xls'])
