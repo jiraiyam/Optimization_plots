@@ -234,7 +234,7 @@ def section_1(df):
         plt.xticks(rotation=45)
 
     # Display legend outside the plot grid
-    plt.legend(loc='upper left', bbox_to_anchor=(1.6, 1.1))
+    plt.legend(loc='upper left', bbox_to_anchor=(1.2, 1.1))
 
     plt.suptitle("Categorical Plots with Mean and Median for Metrics Across Models", fontsize=16, fontweight='bold')
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
