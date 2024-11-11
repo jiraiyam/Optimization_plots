@@ -465,7 +465,6 @@ def section_1(df):
     st.pyplot(plt.gcf())
 #################################################################
     fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(10, 12))
-    fig.suptitle("Q-Q Plots for Normality Test of Each Metric", fontsize=16, fontweight='bold')
 
     axes = axes.flatten()  # Flatten the axes for easy indexing
 
@@ -497,7 +496,7 @@ def section_1(df):
         # Plot the normal curve
         plt.plot(x, p, 'k', linewidth=2, label='Normal Curve')
 
-        plt.title(f'Histogram with Normal Curve for {metric}', fontsize=12)
+        plt.title(f'Histogram with Normal Curve for /n {metric}', fontsize=12)
         plt.legend()
 
     plt.suptitle("Histograms with Normal Distribution Curve for Metrics Across Models", fontsize=16, fontweight='bold')
