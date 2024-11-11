@@ -234,7 +234,7 @@ def section_1(df):
         plt.xticks(rotation=45)
 
     # Display legend outside the plot grid
-    plt.legend(loc='upper left', bbox_to_anchor=(1.2, 1.1))
+    plt.legend(loc='upper left', bbox_to_anchor=(0.9, 1.1))
 
     plt.suptitle("Categorical Plots with Mean and Median for Metrics Across Models", fontsize=16, fontweight='bold')
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -444,7 +444,7 @@ def section_1(df):
         ax.set_title(f"Cumulative Distribution of {metric}", fontsize=12)
 
     plt.legend(loc='best', bbox_to_anchor=(1.1, 1.1))
-    plt.suptitle("Cumulative Distribution Plots for Metrics Across Models", fontsize=16, fontweight='bold')
+    plt.suptitle("Cumulative Distribution Plots \n for Metrics Across Models", fontsize=16, fontweight='bold')
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
     # Pass the figure to st.pyplot
