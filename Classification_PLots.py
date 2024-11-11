@@ -205,7 +205,7 @@ def section_1(df):
         plt.title(f"Swarm Plot for {metric} \n with Mean and Std Dev", fontsize=12)
         plt.xticks(rotation=45)
 
-    plt.legend(loc='best', bbox_to_anchor=(1, 0.91))
+    plt.legend(loc='best', bbox_to_anchor=(0.8, 0.91))
     plt.suptitle("Swarm Plots for Metrics Across Models", fontsize=16, fontweight='bold')
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     st.pyplot(plt.gcf())
