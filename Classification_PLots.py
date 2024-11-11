@@ -153,7 +153,7 @@ def section_1(df):
         plt.xticks(rotation=45)
 
     # Only display the legend for the last subplot
-    plt.legend(loc='upper left', bbox_to_anchor=(1.4, 1.1))
+    plt.legend(loc='upper left', bbox_to_anchor=(1.2, 1.1))
 
     plt.suptitle("Box Plots with Mean and Median for Metrics Across Models", fontsize=16, fontweight='bold')
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
@@ -181,7 +181,7 @@ def section_1(df):
         plt.xticks(rotation=45)
 
     # Only display the legend once outside the subplot grid
-    plt.legend(loc='upper left', bbox_to_anchor=(1.4, 1.1))
+    plt.legend(loc='upper left', bbox_to_anchor=(1.2, 1.1))
 
     plt.suptitle("Violin Plots with Mean and Median for Metrics Across Models", fontsize=16, fontweight='bold')
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
