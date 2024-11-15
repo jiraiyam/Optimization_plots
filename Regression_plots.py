@@ -15,10 +15,12 @@ import scipy.cluster.hierarchy as sch
 from scipy.interpolate import CubicSpline
 
 sns.set(style="whitegrid")
-plt.rcParams.update(
-    {'font.weight': 'bold', 'axes.labelweight': 'bold',
-     'axes.titleweight': 'bold', 'axes.titlesize': 14}
-)
+plt.rcParams.update({
+    'font.weight': 'bold', 
+    'axes.labelweight': 'bold', 
+    'axes.titleweight': 'bold', 
+    'axes.titlesize': 14
+})
 
 # Load file function
 def load_file(uploaded_file):
