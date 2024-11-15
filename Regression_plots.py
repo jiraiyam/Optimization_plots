@@ -35,10 +35,7 @@ def load_file(uploaded_file):
 
 
 def section_1(df):
-    plt.rcParams.update(
-    {'font.weight': 'bold', 'axes.labelweight': 'bold',
-     'axes.titleweight': 'bold', 'axes.titlesize': 14}
-)
+   
 
     st.subheader("Section 1 Analysis")
 
@@ -47,14 +44,14 @@ def section_1(df):
     data.columns = data.columns.str.strip()
 
     plt.figure(figsize=(12, 6))
-    sns.boxplot(data=data.drop('Models', axis=1))
+    sns.boxplot(data=data.drop(data.columns[0], axis=1))
     plt.xticks(rotation=45, ha="right", fontsize=10)
     plt.title("Box Plot of Model Metrics")
     plt.ylabel("Values")
     st.pyplot(plt)
     plt.clf()
 
-    melted_data = data.melt(id_vars='Models', var_name='Metric', value_name='Value')
+    melted_data = data.melt(id_vars=data.columns[0], var_name='Metric', value_name='Value')
 
     # Create the boxplot with swarm overlay
     plt.figure(figsize=(12, 6))
