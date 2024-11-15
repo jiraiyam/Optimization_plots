@@ -33,6 +33,11 @@ def load_file(uploaded_file):
 
 
 def section_1(df):
+    plt.rcParams.update(
+    {'font.weight': 'bold', 'axes.labelweight': 'bold',
+     'axes.titleweight': 'bold', 'axes.titlesize': 14}
+)
+
     st.subheader("Section 1 Analysis")
 
     # Copy and clean up the data
