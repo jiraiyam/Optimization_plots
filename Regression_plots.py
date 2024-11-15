@@ -157,7 +157,7 @@ def section_1(df):
         sns.swarmplot(data=metrics, y=metric, color="black", alpha=0.5)
 
         # Title for each subplot
-        plt.title(f"{metric} Distribution Across Models", fontsize=12)
+        plt.title(f"{metric} Distribution \n Across Models", fontsize=12)
 
         # Adjust layout for better spacing
         plt.tight_layout()
