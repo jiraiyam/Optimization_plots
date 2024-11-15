@@ -183,7 +183,7 @@ def section_1(df):
         sns.swarmplot(data=metrics, x=metric, color="black", alpha=0.5)
 
         # Title for each subplot
-        plt.title(f"{metric} Distribution Across Models", fontsize=12)
+        plt.title(f"{metric} Distribution \n Across Models", fontsize=12)
 
         # Adjust layout for better spacing
         plt.tight_layout()
@@ -217,7 +217,7 @@ def section_1(df):
                  label=f'Std: {std_value:.4f}')
 
         # Title for each subplot
-        plt.title(f"{metric} Distribution with Mean & Std", fontsize=12)
+        plt.title(f"{metric} Distribution \n with Mean & Std", fontsize=12)
 
         # Show legend
         plt.legend()
@@ -245,7 +245,7 @@ def section_1(df):
 
     plt.tight_layout()
 
-    plt.suptitle("Violin Plots with Box Plot \n Overlay for All Metrics", fontsize=16, y=1.02)
+    plt.suptitle("Violin Plots with Box Plot  Overlay for All Metrics", fontsize=16, y=1.02)
 
     st.pyplot(plt)
     plt.clf()
@@ -269,7 +269,7 @@ def section_1(df):
         sns.swarmplot(data=data, y=metric, color="orange", alpha=0.6)
 
         # Title for each subplot
-        plt.title(f'Swarm + Violin + Boxplot: {metric}')
+        plt.title(f'Swarm + Violin + \n Boxplot: {metric}')
 
     # Adjust layout for better spacing
     plt.tight_layout()
@@ -552,7 +552,7 @@ def section_1(df):
     for i, metric in enumerate(data.columns[1:], 1):  # Exclude 'Models' column
         plt.subplot(2, 4, i)
         sns.histplot(data[metric], kde=True, color="skyblue", bins=20)
-        plt.title(f'Distribution Plot with KDE: {metric}')
+        plt.title(f'Distribution Plot \n with KDE: {metric}')
 
     # Adjust layout and set the overall title
     plt.tight_layout()
