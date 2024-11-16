@@ -567,7 +567,7 @@ def section_1(df):
 
     # Create a FacetGrid with bar plots for each metric
     g = sns.FacetGrid(melted_data, col="Metric", col_wrap=3, height=4, sharey=False)
-    g.map(sns.barplot, "Models", "Value", palette="viridis", order=df["Models"])
+    g.map(sns.barplot, df.columns[0], "Value", palette="viridis", order=df.columns[0])
 
     # Set titles, x-tick labels, and overall figure title
     g.set_titles("{col_name}")
