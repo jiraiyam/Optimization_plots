@@ -176,28 +176,49 @@ Gradient Boosting"""
             self.display_results(df, stage)
 
         # Optimization stage
+        # Optimization stage
         with st.expander("🎯 Model Optimization", expanded=True):
+            # Select model to optimize
             selected_model = st.selectbox(
                 "Select model for optimization:",
                 models,
                 key="optimizer_model_select"
             )
+
+            # Input optimizer names
             optimizers = st.text_input(
                 "Enter optimizer names (comma-separated):",
                 "GA, PSO, GWO",
                 key="optimizer_names"
             ).split(',')
 
+            # Initialize optimization results
             optimization_results = []
-            for optimizer in optimizers:
+
+            for idx, optimizer in enumerate(optimizers):
                 optimizer = optimizer.strip()
-                matrix = matrices[selected_model]
+
+                if idx == 0:
+                    # First optimizer uses the selected model's matrix directly
+                    matrix = matrices[selected_model]
+                else:
+                    # Each subsequent optimizer allows the user to choose a model
+                    reference_model = st.selectbox(
+                        f"Select reference model for {optimizer} (values will be used):",
+                        models,
+                        index=min(idx, len(models) - 1),  # Default to the next model by index
+                        key=f"reference_model_{idx}"
+                    )
+                    matrix = matrices[reference_model]
+
+                # Calculate metrics with updated matrix for the stage
                 metrics = calculator.calculate_metrics(
                     calculator.update_matrix(matrix, self.stage_multipliers["Optimization"])
                 )
-                metrics['Model'] = f"{optimizer} {selected_model}"
+                metrics['Model'] = f"{optimizer} {selected_model}"  # Use the selected model's name
                 optimization_results.append(metrics)
 
+            # Create and display DataFrame for optimization results
             df_optimization = pd.DataFrame(optimization_results)
             self.display_results(df_optimization, "OptimizationResults")
 
