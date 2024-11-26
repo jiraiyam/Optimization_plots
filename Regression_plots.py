@@ -100,12 +100,15 @@ def section_1(df):
 #################################################
     def plot_facetgrid(metrics):
         # Ensure 'Models' column is categorical
+        metrics.columns = metrics.columns.str.upper()
+
         if 'Models' not in metrics.columns or 'mse' not in metrics.columns:
             st.error("The DataFrame must have 'Models' and 'mse' columns.")
-            return
+            return    
+            
     
         metrics['Models'] = metrics['Models'].astype('category')  # Convert to categorical if needed
-    
+
         # Create a FacetGrid
         g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
     
