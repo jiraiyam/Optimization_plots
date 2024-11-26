@@ -99,30 +99,30 @@ def section_1(df):
     plt.clf()
 #################################################
    # metrics['Models'] = metrics['Models'].astype('category')
-"""
-    g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
+
+  #  g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
     
     # Map boxplot to the grid for MSE
-    g.map(sns.boxplot, 'Models', 'mse', color='lightblue')
+   # g.map(sns.boxplot, 'Models', 'mse', color='lightblue')
 
     # Map swarmplot to the grid for MSE
-    g.map(sns.swarmplot, 'Models', 'mse', color='black', alpha=0.5)
+    #g.map(sns.swarmplot, 'Models', 'mse', color='black', alpha=0.5)
 
     # Customize the grid appearance
-    g.set_titles("{col_name}")  # Set titles for each facet
-    g.set_axis_labels('Models', 'MSE')  # Label axes
-    g.set_xticklabels(rotation=45)  # Rotate x-axis labels for better visibility
+#    g.set_titles("{col_name}")  # Set titles for each facet
+ #   g.set_axis_labels('Models', 'MSE')  # Label axes
+  #  g.set_xticklabels(rotation=45)  # Rotate x-axis labels for better visibility
 
     # Adjust layout for better spacing
-    plt.subplots_adjust(top=0.9)
+#    plt.subplots_adjust(top=0.9)
 
     # Set the title for the entire grid
-    g.fig.suptitle('FacetGrid of MSE Across Different Models', fontsize=16)
+ #   g.fig.suptitle('FacetGrid of MSE Across Different Models', fontsize=16)
 
     # Display the plot in Streamlit
-    st.pyplot(plt.gcf())  # Show the plot
-    plt.clf()
-    """
+  #  st.pyplot(plt.gcf())  # Show the plot
+   # plt.clf()
+    
 ###################################################################
     plt.figure(figsize=(16, 12))
 
