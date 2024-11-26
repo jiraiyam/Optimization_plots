@@ -98,8 +98,8 @@ def section_1(df):
     st.pyplot(plt)
     plt.clf()
 #################################################
-    metrics['Models'] = metrics['Models'].astype('category')
-
+   # metrics['Models'] = metrics['Models'].astype('category')
+"""
     g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
     
     # Map boxplot to the grid for MSE
@@ -122,6 +122,7 @@ def section_1(df):
     # Display the plot in Streamlit
     st.pyplot(plt.gcf())  # Show the plot
     plt.clf()
+    """
 ###################################################################
     plt.figure(figsize=(16, 12))
 
