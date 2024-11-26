@@ -98,8 +98,10 @@ def section_1(df):
     st.pyplot(plt)
     plt.clf()
 #################################################
-    g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
+    metrics['Models'] = metrics['Models'].astype('category')
 
+    g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
+    
     # Map boxplot to the grid for MSE
     g.map(sns.boxplot, 'Models', 'mse', color='lightblue')
 
