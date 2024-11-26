@@ -75,21 +75,21 @@ def section_1(df):
 ####################################################################
     def plot_metrics(metrics):
     # Assuming the first column is 'Models'
-    num_metrics = len(metrics.columns[1:])  # Exclude the first column
-    rows = (num_metrics + 3) // 4  # Calculate rows needed for a max of 4 columns
-    cols = min(num_metrics, 4)  # Max 4 columns per row
+        num_metrics = len(metrics.columns[1:])  # Exclude the first column
+        rows = (num_metrics + 3) // 4  # Calculate rows needed for a max of 4 columns
+        cols = min(num_metrics, 4)  # Max 4 columns per row
+        
+        plt.figure(figsize=(16, rows * 4))  # Adjust figure size dynamically
     
-    plt.figure(figsize=(16, rows * 4))  # Adjust figure size dynamically
-
-    for i, metric in enumerate(metrics.columns[1:], 1):  # Start from the second column
-        plt.subplot(rows, cols, i)
-        sns.boxplot(data=metrics, y=metric, color="lightblue")
-        sns.swarmplot(data=metrics, y=metric, color="black", alpha=0.5)
-        plt.title(f"{metric} Distribution\nAcross Models")
-        plt.tight_layout()
-
-    plt.suptitle("Swarm Plot Overlayed on Box Plot for Individual Metrics", y=1.02)
-    plt.subplots_adjust(top=0.9)  # Adjust spacing for the title
+        for i, metric in enumerate(metrics.columns[1:], 1):  # Start from the second column
+            plt.subplot(rows, cols, i)
+            sns.boxplot(data=metrics, y=metric, color="lightblue")
+            sns.swarmplot(data=metrics, y=metric, color="black", alpha=0.5)
+            plt.title(f"{metric} Distribution\nAcross Models")
+            plt.tight_layout()
+    
+        plt.suptitle("Swarm Plot Overlayed on Box Plot for Individual Metrics", y=1.02)
+        plt.subplots_adjust(top=0.9)  # Adjust spacing for the title
 
 # Call this function inside your Streamlit script
 # st.pyplot() ensures the plot displays in the Streamlit app
