@@ -101,7 +101,7 @@ def section_1(df):
     def plot_facetgrid(metrics):
         # Ensure 'Models' column is categorical
         metrics.columns = metrics.columns.str.upper()
-
+        mertics.columns[0]='Models'
         if 'Models' not in metrics.columns or 'mse' not in metrics.columns:
             st.error("The DataFrame must have 'Models' and 'mse' columns.")
             return    
