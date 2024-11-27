@@ -13,14 +13,12 @@ from pandas.plotting import andrews_curves
 import networkx as nx
 import scipy.cluster.hierarchy as sch
 from scipy.interpolate import CubicSpline
-
+import math
 sns.set(style="whitegrid")
-plt.rcParams.update({
-    'font.weight': 'bold', 
-    'axes.labelweight': 'bold', 
-    'axes.titleweight': 'bold', 
-    'axes.titlesize': 14
-})
+plt.rcParams.update(
+    {'font.weight': 'bold', 'axes.labelweight': 'bold',
+     'axes.titleweight': 'bold', 'axes.titlesize': 14}
+)
 
 # Load file function
 def load_file(uploaded_file):
@@ -35,8 +33,6 @@ def load_file(uploaded_file):
 
 
 def section_1(df):
-   
-
     st.subheader("Section 1 Analysis")
 
     # Copy and clean up the data
@@ -44,14 +40,14 @@ def section_1(df):
     data.columns = data.columns.str.strip()
 
     plt.figure(figsize=(12, 6))
-    sns.boxplot(data=data.drop(data.columns[0], axis=1))
+    sns.boxplot(data=data.drop('Models', axis=1))
     plt.xticks(rotation=45, ha="right", fontsize=10)
     plt.title("Box Plot of Model Metrics")
     plt.ylabel("Values")
     st.pyplot(plt)
     plt.clf()
 
-    melted_data = data.melt(id_vars=data.columns[0], var_name='Metric', value_name='Value')
+    melted_data = data.melt(id_vars='Models', var_name='Metric', value_name='Value')
 
     # Create the boxplot with swarm overlay
     plt.figure(figsize=(12, 6))
@@ -73,71 +69,17 @@ def section_1(df):
     st.pyplot(plt)  # Display the plot in the Streamlit app
     plt.clf()
 ####################################################################
-    def plot_metrics(metrics):
-    # Assuming the first column is 'Models'
-        num_metrics = len(metrics.columns[1:])  # Exclude the first column
-        rows = (num_metrics + 3) // 4  # Calculate rows needed for a max of 4 columns
-        cols = min(num_metrics, 4)  # Max 4 columns per row
-        
-        plt.figure(figsize=(16, rows * 4))  # Adjust figure size dynamically
-    
-        for i, metric in enumerate(metrics.columns[1:], 1):  # Start from the second column
-            plt.subplot(rows, cols, i)
-            sns.boxplot(data=metrics, y=metric, color="lightblue")
-            sns.swarmplot(data=metrics, y=metric, color="black", alpha=0.5)
-            plt.title(f"{metric} Distribution\nAcross Models")
-            plt.tight_layout()
-    
-        plt.suptitle("Swarm Plot Overlayed on Box Plot for Individual Metrics", y=1.02)
-        plt.subplots_adjust(top=0.9)  # Adjust spacing for the title
+    metrics = data.copy()  # Assuming `data` contains the metrics you want to plot
 
-# Call this function inside your Streamlit script
-# st.pyplot() ensures the plot displays in the Streamlit app
-# Assuming 'data' is your DataFrame
-    plot_metrics(data)
-    st.pyplot(plt)
-    plt.clf()
-#################################################
-    def plot_facetgrid(metrics):
-        # Ensure 'Models' column is categorical
-        metrics.columns = metrics.columns.str.upper()
-        mertics.columns[0]='Models'
-        if 'Models' not in metrics.columns or 'mse' not in metrics.columns:
-            st.error("The DataFrame must have 'Models' and 'mse' columns.")
-            return    
-            
-    
-        metrics['Models'] = metrics['Models'].astype('category')  # Convert to categorical if needed
+    # Dynamically determine the number of columns and rows
+    num_metrics = len(metrics.columns[1:])  # Exclude the first column (e.g., 'Models')
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Choose columns based on square root
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows accordingly
 
-        # Create a FacetGrid
-        g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
-    
-        # Map boxplot and swarmplot to the grid
-        g.map(sns.boxplot, 'Models', 'mse', color='lightblue', order=metrics['Models'].cat.categories)
-        g.map(sns.swarmplot, 'Models', 'mse', color='black', alpha=0.5, order=metrics['Models'].cat.categories)
-    
-        # Customize the grid appearance
-        g.set_titles("{col_name}")  # Set titles for each facet
-        g.set_axis_labels('Models', 'MSE')  # Label axes
-        g.set_xticklabels(rotation=45)  # Rotate x-axis labels for better visibility
-    
-        # Adjust layout and set a global title
-        plt.subplots_adjust(top=0.9)
-        g.fig.suptitle('FacetGrid of MSE Across Different Models', fontsize=16)
-    
-        # Display the plot in Streamlit
-        st.pyplot(g.fig)
-        plt.clf()
-
-# Call this function in your Streamlit app
-# Assuming `data` is your DataFrame
-    plot_facetgrid(data)
-    
-###################################################################
-    plt.figure(figsize=(16, 12))
+    plt.figure(figsize=(16, 12))  # Adjust the figure size dynamically if needed
 
     for i, metric in enumerate(metrics.columns[1:], 1):  # Assuming the first column is 'Models'
-        plt.subplot(3, 4, i)  # Create subplot for each metric (arranged in 3 rows and 4 columns)
+        plt.subplot(num_rows, num_cols, i)  # Create subplot for each metric
 
         # Boxplot with added customization (palette and linewidth)
         sns.boxplot(data=metrics, y=metric, color="lightblue", linewidth=1.5)
@@ -161,18 +103,88 @@ def section_1(df):
         plt.ylim(min(metrics[metric]) - 0.05, max(metrics[metric]) + 0.05)
         plt.grid(True, axis='y', linestyle='--', alpha=0.6)
 
-        plt.tight_layout()  # Adjust layout for spacing
-
-    # Set a title for the whole figure
+    plt.tight_layout()  # Adjust layout for spacing
     plt.suptitle("Swarm Plot Overlayed on Box Plot for Individual Metrics with Mean and STD", y=1.05, fontsize=16)
     st.pyplot(plt)  # Display the plot in the Streamlit app
     plt.clf()
+#################################################
+    metrics.columns = [metrics.columns[0]] + metrics.columns[1:].str.lower().tolist()
+
+    g = sns.FacetGrid(metrics, col="Models", col_wrap=4, height=3, aspect=1.5)
+
+    # Map boxplot to the grid for MSE
+    g.map(sns.boxplot, 'Models', 'mse', color='lightblue')
+
+    # Map swarmplot to the grid for MSE
+    g.map(sns.swarmplot, 'Models', 'mse', color='black', alpha=0.5)
+
+    # Customize the grid appearance
+    g.set_titles("{col_name}")  # Set titles for each facet
+    g.set_axis_labels('Models', 'MSE')  # Label axes
+    g.set_xticklabels(rotation=45)  # Rotate x-axis labels for better visibility
+
+    # Adjust layout for better spacing
+    plt.subplots_adjust(top=0.9)
+
+    # Set the title for the entire grid
+
+    # Display the plot in Streamlit
+    st.pyplot(plt.gcf())  # Show the plot
+    plt.clf()
+###################################################################
+    num_metrics = len(metrics.columns[1:])  # Exclude the first column (e.g., 'Models')
+
+    # Dynamically calculate the number of columns and rows
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
+
+    plt.figure(figsize=(16, 12))  # Set figure size dynamically
+
+    for i, metric in enumerate(metrics.columns[1:], 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
+
+        # Boxplot with added customization (palette and linewidth)
+        sns.boxplot(data=metrics, y=metric, color="lightblue", linewidth=1.5)
+
+        # Swarm plot with customized color and size of points
+        sns.swarmplot(data=metrics, y=metric, color="black", alpha=0.7, size=6, warn_thresh=0)
+
+        # Add mean and standard deviation text annotations
+        mean_value = metrics[metric].mean()
+        std_value = metrics[metric].std()
+
+        # Adding text with relative positioning
+        plt.text(0.5, mean_value, f'Mean: {mean_value:.4f}', horizontalalignment='center',
+                 verticalalignment='center', fontsize=10, color='darkblue')
+        plt.text(0.5, mean_value + std_value, f'STD: {std_value:.4f}', horizontalalignment='center',
+                 verticalalignment='center', fontsize=10, color='darkred')
+
+        # Title for each subplot
+        plt.title(f"{metric} Distribution Across Models", fontsize=12)
+
+        # Customizing y-axis limits and grid
+        plt.ylim(min(metrics[metric]) - 0.05, max(metrics[metric]) + 0.05)
+        plt.grid(True, axis='y', linestyle='--', alpha=0.6)
+
+    plt.tight_layout()  # Adjust layout for better spacing
+    plt.suptitle("Swarm Plot Overlayed on Box Plot for Individual Metrics with Mean and STD", y=1.02, fontsize=16)
+    st.pyplot(plt)  # Display the plot in the Streamlit app
+    plt.clf()
 ###########################################################
-    plt.figure(figsize=(12, 8))
+    metrics = data.copy()  # Assuming `data` contains the metrics you want to plot
+
+    # Determine the number of metrics to plot (excluding the first column)
+    num_metrics = len(metrics.columns[1:])  # Exclude the first column (e.g., 'Models')
+
+    # Dynamically calculate the number of columns and rows
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
+
+    plt.figure(figsize=(16, 12))  # Set figure size dynamically
 
     # Loop through each metric and create a Violin plot with Swarm plot overlay
-    for i, metric in enumerate(metrics.columns[1:], 1):  # Assuming the first column is 'Models'
-        plt.subplot(2, 4, i)  # Create subplot for each metric (arranged in 2 rows and 4 columns)
+    for i, metric in enumerate(metrics.columns[1:], 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
         # Violin plot with lightblue color and no inner data (to highlight distribution)
         sns.violinplot(data=metrics, y=metric, color="lightblue", inner=None)
@@ -181,10 +193,10 @@ def section_1(df):
         sns.swarmplot(data=metrics, y=metric, color="black", alpha=0.5)
 
         # Title for each subplot
-        plt.title(f"{metric} Distribution \n Across Models", fontsize=12)
+        plt.title(f"{metric} Distribution Across Models", fontsize=12)
 
-        # Adjust layout for better spacing
-        plt.tight_layout()
+    # Adjust layout for better spacing
+    plt.tight_layout()
 
     # Set a title for the entire figure
     plt.suptitle("Violin Plot with Swarm Plot Overlay for Metrics", y=1.02, fontsize=16)
@@ -192,25 +204,33 @@ def section_1(df):
     # Display the plot in the Streamlit app
     st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
-
 ###################################################################
-    plt.figure(figsize=(12, 8))
+    metrics = data.copy()  # Assuming `data` contains the metrics you want to plot
+
+    # Determine the number of metrics to plot (excluding the first column)
+    num_metrics = len(metrics.columns[1:])  # Exclude the first column (e.g., 'Models')
+
+    # Dynamically calculate the number of columns and rows
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
+
+    plt.figure(figsize=(16, 12))  # Set figure size dynamically
 
     # Loop through each metric and create a Box plot with Horizontal Swarm plot overlay
-    for i, metric in enumerate(metrics.columns[1:], 1):  # Assuming the first column is 'Models'
-        plt.subplot(2, 4, i)  # Create subplot for each metric (arranged in 2 rows and 4 columns)
+    for i, metric in enumerate(metrics.columns[1:], 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
-        # Box plot with horizontal orientation (x-axis for the metric)
+        # Box plot with horizontal orientation
         sns.boxplot(data=metrics, x=metric, color="blue", width=0.5)
 
-        # Swarm plot with horizontal orientation (x-axis for the metric)
+        # Swarm plot with horizontal orientation
         sns.swarmplot(data=metrics, x=metric, color="black", alpha=0.5)
 
         # Title for each subplot
-        plt.title(f"{metric} Distribution \n Across Models", fontsize=12)
+        plt.title(f"{metric} Distribution Across Models", fontsize=12)
 
-        # Adjust layout for better spacing
-        plt.tight_layout()
+    # Adjust layout for better spacing
+    plt.tight_layout()
 
     # Set a title for the entire figure
     plt.suptitle("Box Plot with Horizontal Swarm Plot for Metrics", y=1.02, fontsize=16)
@@ -220,13 +240,20 @@ def section_1(df):
     plt.clf()
 ############################################################
 
-    plt.figure(figsize=(12, 8))
+    metrics = data.copy()  # Assuming `data` contains the metrics you want to plot
+
+    # Determine the number of metrics to plot (excluding the first column)
+    num_metrics = len(metrics.columns[1:])  # Exclude the first column (e.g., 'Models')
+
+    # Dynamically calculate the number of columns and rows
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
+
+    plt.figure(figsize=(16, 12))  # Set figure size dynamically
 
     # Loop through each metric and create a Box plot with Mean and Std annotations
-    metrics = data.copy()  # Assuming data contains the metrics you want to plot
-
-    for i, metric in enumerate(metrics.columns[1:], 1):  # Assuming the first column is 'Models'
-        plt.subplot(2, 4, i)  # Create subplot for each metric (arranged in 2 rows and 4 columns)
+    for i, metric in enumerate(metrics.columns[1:], 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
         # Create the box plot
         sns.boxplot(data=metrics, y=metric, color="lightblue")
@@ -235,65 +262,83 @@ def section_1(df):
         mean_value = metrics[metric].mean()
         std_value = metrics[metric].std()
 
-        # Plot the mean and std lines
-        plt.plot([0, 1], [mean_value, mean_value], color="black", linewidth=2, label=f'Mean: {mean_value:.4f}')
-        plt.plot([0, 1], [mean_value + std_value, mean_value + std_value], color="red", linestyle='--',
-                 label=f'Std: {std_value:.4f}')
+        # Plot the mean and std lines using axhline
+        plt.axhline(mean_value, color="black", linewidth=2, label=f'Mean: {mean_value:.4f}')
+        plt.axhline(mean_value + std_value, color="red", linestyle='--', label=f'Mean + Std: {mean_value + std_value:.4f}')
+        plt.axhline(mean_value - std_value, color="green", linestyle='--', label=f'Mean - Std: {mean_value - std_value:.4f}')
 
         # Title for each subplot
-        plt.title(f"{metric} Distribution \n with Mean & Std", fontsize=12)
+        plt.title(f"{metric} Distribution with Mean & Std", fontsize=12)
 
         # Show legend
-        plt.legend()
+        plt.legend(loc="upper right", fontsize=8)
 
-        # Adjust layout for better spacing
-        plt.tight_layout()
+    # Adjust layout for better spacing
+    plt.tight_layout()
 
+    # Set a title for the entire figure
     plt.suptitle("Box Plot with Mean & Std for Each Metric", y=1.02, fontsize=16)
 
+    # Display the plot in the Streamlit app
     st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
 ######################################################
     metrics_columns = data.columns[1:]
 
-    plt.figure(figsize=(12, 8))
+    # Dynamically calculate the number of columns and rows
+    num_metrics = len(metrics_columns)  # Number of metrics to plot
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
 
+    plt.figure(figsize=(16, 12))  # Set figure size dynamically
+
+    # Loop through each metric and create a Violin plot with Box plot overlay
     for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
+        # Create the Violin plot with stick plot inside
         sns.violinplot(data=data, y=metric, inner="stick", color="lightgreen")
 
+        # Create the Box plot overlaying the Violin plot
         sns.boxplot(data=data, y=metric, width=0.3, color="black")
 
-        plt.title(f'Violin Plot with Box \n Plot Overlay: {metric}')
+        # Title for each subplot
+        plt.title(f'Violin Plot with Box  Plot Overlay: {metric}', fontsize=12)
 
+    # Adjust layout for better spacing
     plt.tight_layout()
 
-    plt.suptitle("Violin Plots with Box Plot  Overlay for All Metrics", fontsize=16, y=1.02)
+    # Set a title for the entire figure
+    plt.suptitle("Violin Plots with Box Plot \n Overlay for All Metrics", fontsize=16, y=1.02)
 
-    st.pyplot(plt)
+    # Display the plot in the Streamlit app
+    st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
 ###############################################
-    metrics_columns = data.columns[1:]  # Assuming the first column is 'Models'
+    num_metrics = len(metrics_columns)  # Number of metrics to plot
+
+    # Dynamically calculate the number of columns and rows for the grid
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
 
     # Create the figure with a specific size
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(12, 8))  # Adjust the figure size as needed
 
-    # Loop through each metric and create a combination of Swarm, Violin, and Box plots
-    for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)  # Create subplot for each metric (arranged in 2 rows and 4 columns)
+    # Loop through each metric and create the mixed plot (Swarm + Violin + Boxplot)
+    for i, metric in enumerate(metrics_columns, 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
-        # Violin plot
+        # Violin plot for distribution with stick representation for individual data points
         sns.violinplot(data=data, y=metric, inner="stick", color="lightblue")
 
-        # Box plot for summary statistics
+        # Box plot for summary statistics (with no outliers displayed)
         sns.boxplot(data=data, y=metric, width=0.3, color="black", fliersize=0)
 
-        # Swarm plot for individual data points
+        # Swarm plot for individual data points with transparency
         sns.swarmplot(data=data, y=metric, color="orange", alpha=0.6)
 
         # Title for each subplot
-        plt.title(f'Swarm + Violin + \n Boxplot: {metric}')
+        plt.title(f'Swarm + Violin + Boxplot: {metric}', fontsize=12)
 
     # Adjust layout for better spacing
     plt.tight_layout()
@@ -305,34 +350,51 @@ def section_1(df):
     st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
 ################################################
-    metrics_columns = data.columns[1:]
+    metrics_columns = data.columns[1:]  # Exclude the first column (e.g., 'Models')
+    num_metrics = len(metrics_columns)  # Total number of metrics to plot
 
-    plt.figure(figsize=(12, 8))
+    # Dynamically calculate the number of columns and rows for the grid
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
 
-    for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)
+    plt.figure(figsize=(12, 8))  # Set figure size dynamically
 
+    # Loop through each metric and create the mixed plot (Boxplot + Violin plot)
+    for i, metric in enumerate(metrics_columns, 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
+
+        # Violin plot with inner "stick" for better visualization of individual points
         sns.violinplot(data=data, y=metric, inner="stick", color="lightgreen", alpha=0.5)
 
+        # Boxplot overlayed on the violin plot
         sns.boxplot(data=data, y=metric, width=0.3, color="black", fliersize=0)
 
-        plt.title(f'Boxplot + Violin Plot:\n {metric}')
+        # Title for each subplot
+        plt.title(f'Boxplot + Violin Plot:\n {metric}', fontsize=10)
 
+    # Adjust layout for better spacing
     plt.tight_layout()
 
+    # Set a title for the entire figure
     plt.suptitle("Mixed Plot: Boxplot + Violin Plot for Metrics", fontsize=16, y=1.02)
 
-    st.pyplot(plt)
+    # Display the plot in Streamlit
+    st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
 ###########################################################
-    metrics_columns = data.columns[1:]  # Assuming the first column is 'Models'
+    metrics_columns = data.columns[1:]  # Exclude the first column (e.g., 'Models')
+    num_metrics = len(metrics_columns)  # Total number of metrics to plot
+
+    # Dynamically calculate the number of columns and rows for the grid
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
 
     # Create the figure with a specific size
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(12, 8))  # Adjust the figure size as needed
 
-    # Loop through each metric and create a KDE plot with Box plot overlay
-    for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)  # Create subplot for each metric (arranged in 2 rows and 4 columns)
+    # Loop through each metric and create the mixed plot (KDE Plot + Boxplot)
+    for i, metric in enumerate(metrics_columns, 1):  # Start with index 1
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
         # KDE plot for density estimation
         sns.kdeplot(data=data[metric], color="blue", lw=2, fill=True)
@@ -442,26 +504,40 @@ def section_1(df):
     st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
 ########################################################
-    metrics_columns = data.columns[1:]
+    metrics_columns = data.columns[1:]  # Exclude the first column (e.g., 'Models')
 
-    plt.figure(figsize=(12, 8))
+    # Dynamically calculate the number of columns and rows
+    num_metrics = len(metrics_columns)
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate rows based on columns
 
+    # Create the figure with a specific size
+    plt.figure(figsize=(12, 8))  # Adjust the figure size as needed
+
+    # Loop through each metric and create the mixed plot (Violin Plot + KDE Plot)
     for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)
+        plt.subplot(num_rows, num_cols, i)  # Dynamically set the subplot grid
 
+        # Violin plot for distribution
         sns.violinplot(data=data, y=metric, color="lightblue")
 
+        # KDE plot for density estimation
         sns.kdeplot(data=data[metric], color="black", linewidth=2)
 
+        # Title for each subplot
         plt.title(f"{metric} Distribution with KDE")
-        plt.tight_layout()
 
+    # Adjust layout for better spacing
+    plt.tight_layout()
+
+    # Set a main title for the entire figure
     plt.suptitle("Violin Plot with KDE for Each Metric", y=1.02, fontsize=16)
 
-    st.pyplot(plt)
+    # Display the plot in Streamlit
+    st.pyplot(plt)  # Render the plot in Streamlit
     plt.clf()
 
-#############################################
+    #############################################
     melted_data = data.melt(id_vars='Models', var_name='variable', value_name='value')
 
     sns.set(style="ticks")
@@ -481,14 +557,19 @@ def section_1(df):
     plt.clf()
 ####################################################
 
-    metrics_columns = data.columns[1:]  # Assuming the first column is 'Models'
+    metrics_columns = data.columns[1:]  # Exclude the first column (e.g., 'Models')
+
+    # Calculate number of rows and columns dynamically
+    num_metrics = len(metrics_columns)
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Calculate optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate number of rows
 
     # Initialize figure for Density + KDE plots
     plt.figure(figsize=(12, 8))
 
     # Loop through each metric to create subplots
     for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)
+        plt.subplot(num_rows, num_cols, i)  # Dynamically arrange subplots
 
         # KDE plot for smooth density
         sns.kdeplot(data=data[metric], color="green", lw=2, fill=True)
@@ -496,6 +577,7 @@ def section_1(df):
         # Density plot with dashed line
         sns.kdeplot(data=data[metric], color="blue", lw=2, fill=False, linestyle="--")
 
+        # Title for each subplot
         plt.title(f'Density + KDE for {metric}')
 
     # Layout adjustments and main title
@@ -507,40 +589,50 @@ def section_1(df):
     plt.clf()
 ############################################
 
-
-
     data.columns = data.columns.str.strip()
 
-    # Set figure size and layout for subplots
+    # حساب عدد الأعمدة والصفوف ديناميكيًا بناءً على عدد المقاييس
+    num_metrics = len(data.columns[1:])  # استبعاد العمود الأول 'Models'
+    num_cols = math.ceil(math.sqrt(num_metrics))  # عدد الأعمدة الأمثل
+    num_rows = math.ceil(num_metrics / num_cols)  # عدد الصفوف
+
+    # إعداد الشكل العام للمخططات
     plt.figure(figsize=(16, 12))
 
-    # Iterate through each metric to create individual KDE subplots
-    for i, metric in enumerate(data.columns[1:], 1):  # Exclude 'Models' column
-        plt.subplot(3, 4, i)
+    # تكرار لكل مقياس لإنشاء المخططات الفرعية
+    for i, metric in enumerate(data.columns[1:], 1):  # استبعاد عمود 'Models'
+        plt.subplot(num_rows, num_cols, i)  # تحديد توزيع الصفوف والأعمدة ديناميكيًا
         sns.kdeplot(data[metric], shade=True, color='lightblue', alpha=0.7)
         plt.title(f"KDE Plot of {metric}", fontsize=12)
         plt.grid(True)
-        plt.tight_layout()  # Ensure spacing between subplots
 
-    # Set the overall title for the KDE grid
+    # ضبط التخطيط بشكل جيد بين المخططات
+    plt.tight_layout()
+
+    # إضافة عنوان رئيسي للمخططات
     plt.suptitle('KDE Plots for Metrics Distribution', y=1.05, fontsize=16)
 
-    # Render the plot in Streamlit
-    st.pyplot(plt.gcf())  # Display the current figure
+    # عرض المخطط في Streamlit
+    st.pyplot(plt.gcf())  # عرض الشكل الحالي في Streamlit
     plt.clf()
 ############################
     data.columns = data.columns.str.strip()
+
+    # Calculate optimal number of columns and rows dynamically
+    num_metrics = len(data.columns[1:])  # Exclude 'Models' column
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate number of rows based on columns
 
     # Set figure size and layout for subplots
     plt.figure(figsize=(15, 10))
 
     # Iterate through each metric to create histograms with KDE
     for i, metric in enumerate(data.columns[1:], 1):  # Exclude 'Models' column
-        plt.subplot(2, 4, i)
+        plt.subplot(num_rows, num_cols, i)
         sns.histplot(data[metric], kde=True, color='skyblue', bins=15)
         plt.title(f'Histogram & KDE: {metric}', fontsize=12)
 
-    # Adjust layout and set the overall title
+    # Adjust layout for better spacing
     plt.tight_layout()
     plt.suptitle("Histograms with KDE for All Metrics", fontsize=16, y=1.02)
 
@@ -548,20 +640,32 @@ def section_1(df):
     st.pyplot(plt.gcf())  # Display the current figure
     plt.clf()
 ##################################
+    metrics_columns = data.columns[1:]  # Exclude the first column (e.g., 'Models')
+
+    # Calculate number of rows and columns dynamically
+    num_metrics = len(metrics_columns)
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Calculate optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate number of rows
+
+    # Initialize figure for Rug plots
     plt.figure(figsize=(12, 8))
 
-    # Iterate through each metric to create Rug Plots
-    for i, metric in enumerate(data.columns[1:], 1):  # Exclude 'Models' column
-        plt.subplot(2, 4, i)
+    # Loop through each metric to create subplots
+    for i, metric in enumerate(metrics_columns, 1):
+        plt.subplot(num_rows, num_cols, i)  # Dynamically arrange subplots
+
+        # Create Rug plot
         sns.rugplot(data[metric], color="green", height=0.05)
+
+        # Title for each subplot
         plt.title(f'Rug Plot: {metric}')
 
-    # Adjust layout and set the overall title
+    # Layout adjustments and main title
     plt.tight_layout()
     plt.suptitle("Rug Plots for All Metrics", fontsize=16, y=1.02)
 
-    # Render the plot in Streamlit
-    st.pyplot(plt.gcf())  # Display the current figure
+    # Display the plot in Streamlit
+    st.pyplot(plt.gcf())  # Show the current figure in Streamlit
     plt.clf()
 
 #####################################
@@ -576,7 +680,7 @@ def section_1(df):
     for i, metric in enumerate(data.columns[1:], 1):  # Exclude 'Models' column
         plt.subplot(2, 4, i)
         sns.histplot(data[metric], kde=True, color="skyblue", bins=20)
-        plt.title(f'Distribution Plot \n with KDE: {metric}')
+        plt.title(f'Distribution Plot with KDE: {metric}')
 
     # Adjust layout and set the overall title
     plt.tight_layout()
@@ -592,7 +696,7 @@ def section_1(df):
 
     # Create a FacetGrid with bar plots for each metric
     g = sns.FacetGrid(melted_data, col="Metric", col_wrap=3, height=4, sharey=False)
-    g.map(sns.barplot, df.columns[0], "Value", palette="viridis", order=df.columns[0])
+    g.map(sns.barplot, "Models", "Value", palette="viridis", order=df["Models"])
 
     # Set titles, x-tick labels, and overall figure title
     g.set_titles("{col_name}")
@@ -622,23 +726,30 @@ def section_1(df):
 
 #############################################
 
-    metrics_columns = df.columns[1:]
+    metrics_columns = df.columns[1:]  # Excluding the first column (e.g., 'Models')
+
+    # Dynamically calculate the number of rows and columns for subplots
+    num_metrics = len(metrics_columns)
+    num_cols = math.ceil(math.sqrt(num_metrics))  # Optimal number of columns
+    num_rows = math.ceil(num_metrics / num_cols)  # Calculate number of rows
+
     # Create a figure for Q-Q plots of all metrics
     plt.figure(figsize=(15, 10))
 
     # Iterate through each metric and create Q-Q plots
     for i, metric in enumerate(metrics_columns, 1):
-        plt.subplot(2, 4, i)  # Create a subplot for each metric
-        stats.probplot(df[metric], dist="norm", plot=plt)  # Q-Q plot
+        plt.subplot(num_rows, num_cols, i)  # Dynamically arrange subplots
+        stats.probplot(df[metric], dist="norm", plot=plt)  # Create Q-Q plot
         plt.title(f'Q-Q Plot: {metric}', fontsize=12)
 
-    # Adjust the layout and title
+    # Adjust the layout and add a title for the entire figure
     plt.tight_layout()
     plt.suptitle("Q-Q Plots for All Metrics", fontsize=16, y=1.02)
 
     # Render the plot in Streamlit
     st.pyplot(plt)
     plt.clf()
+
 
 def section_2(df):
     st.subheader("Section 2 Analysis")
@@ -1242,8 +1353,10 @@ def section_3(df):
     # Render the plot in Streamlit
     st.pyplot(plt)
     plt.clf()
-
+#############################################################################################
     # Create a contour plot with a scatter overlay for MAE vs RMSE
+    df.columns = [df.columns[0]] + df.columns[1:].str.lower().tolist()
+
     plt.figure(figsize=(10, 8))
     sns.kdeplot(data=df, x="mae", y="rmse", cmap="viridis", fill=True)  # Contour plot
     sns.scatterplot(data=df, x="mae", y="rmse", color="white", edgecolor="black", alpha=0.5)  # Scatter plot overlay
@@ -1258,7 +1371,7 @@ def section_3(df):
 
 
 def main():
-    st.title("Regression  Analysis")
+    st.title("Classification Analysis")
     st.write("Upload a CSV or Excel file and explore different types of plots.")
 
     uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
