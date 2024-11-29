@@ -1371,7 +1371,7 @@ def section_3(df):
 
 
 def main():
-    st.title("Classification Analysis")
+    st.title("Regrssion Analysis")
     st.write("Upload a CSV or Excel file and explore different types of plots.")
 
     uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
